@@ -208,3 +208,28 @@ public:
         return ans;
     }
 };
+
+class Solution {
+public:
+    vector<string> res;
+
+    void backtrack(string curr, int n){
+        if(curr.size() == n){
+            res.push_back(curr);
+            return;
+        }
+
+        for(char ch : {'a','b','c'}){
+            if(curr.empty() || curr.back() != ch){
+                backtrack(curr + ch, n);
+            }
+        }
+    }
+
+    string getHappyString(int n, int k) {
+        backtrack("", n);
+
+        if(res.size() < k) return "";
+        return res[k-1];
+    }
+};
