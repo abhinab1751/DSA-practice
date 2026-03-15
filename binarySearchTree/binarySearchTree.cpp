@@ -110,3 +110,43 @@ int main(){
 
     return 0;
 }
+
+
+class Fancy {
+    static const int MOD = 1e9 + 7;
+    vector<long long> seq;
+    long long mul = 1, add = 0;
+
+    long long power(long long base, long long exp, long long mod) {
+        long long result = 1;
+        base %= mod;
+        while (exp > 0) {
+            if (exp & 1) result = result * base % mod;
+            base = base * base % mod;
+            exp >>= 1;
+        }
+        return result;
+    }
+
+public:
+    Fancy() {}
+
+    void append(int val) {
+        long long inv_mul = power(mul, MOD - 2, MOD);
+        seq.push_back((val - add % MOD + MOD) % MOD * inv_mul % MOD);
+    }
+
+    void addAll(int inc) {
+        add = (add + inc) % MOD;
+    }
+
+    void multAll(int m) {
+        mul = mul * m % MOD;
+        add = add * m % MOD;
+    }
+
+    int getIndex(int idx) {
+        if (idx >= (int)seq.size()) return -1;
+        return (seq[idx] * mul % MOD + add) % MOD;
+    }
+};
