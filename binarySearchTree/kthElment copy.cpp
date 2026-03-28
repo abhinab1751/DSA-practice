@@ -136,3 +136,41 @@ public:
         return false;
     }
 };
+
+//-------------------------------------------------------
+class Solution {
+public:
+    string findTheString(vector<vector<int>>& lcp) {
+        int n = lcp.size();
+        vector<char> word(n, '\0');
+        
+        
+        int char_idx = 0;
+        for (int i = 0; i < n; i++) {
+            if (word[i] != '\0') continue;
+            if (char_idx >= 26) return "";
+            
+            word[i] = 'a' + char_idx++;
+            
+            
+            for (int j = i + 1; j < n; j++) {
+                if (lcp[i][j] > 0) {
+                    if (word[j] != '\0' && word[j] != word[i]) return "";
+                    word[j] = word[i];
+                }
+            }
+        }
+        
+        
+        vector<vector<int>> actual(n + 1, vector<int>(n + 1, 0));
+        
+        for (int i = n - 1; i >= 0; i--) {
+            for (int j = n - 1; j >= 0; j--) {
+                actual[i][j] = (word[i] == word[j]) ? actual[i+1][j+1] + 1 : 0;
+                if (actual[i][j] != lcp[i][j]) return "";
+            }
+        }
+        
+        return string(word.begin(), word.end());
+    }
+};
