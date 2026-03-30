@@ -11,14 +11,17 @@ void print1(){
     }
 }
 
-int main(){                         
-
-    print1();
-    return 0;
+void print2(){
+    for(int i = 0 ; i < 4 ; i++){
+        for(int j = 0 ; j <= i; j++){
+            cout << " * ";
+        }
+        cout << endl;
+    }
 }
 
+int main(){                         
 
-*  *  *  * 
-*  *  *  * 
-*  *  *  * 
-*  *  *  * 
+    print2();
+    return 0;
+}
