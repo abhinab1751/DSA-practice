@@ -158,7 +158,7 @@ void print15(){
 void print16(){
     for(int i = 0; i<= 6; i++){
         char ch = 'A' + i;
-        for(int j = 0 ; j < i;j++){
+        for(int j = 0 ; j <= i;j++){
             cout << ch << " ";
         }
         cout << endl;
