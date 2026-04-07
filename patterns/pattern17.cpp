@@ -165,16 +165,38 @@ void print16(){
     }
 }
 
+void print17(){
+    for(int i = 0 ; i < 6 ; i++){
+        for(int j = 0; j <= 6-i-1; j++){
+            cout << " ";
+        }
+        char ch = 'A';
+        char breakpoint = (2*i + 1)/2;
+        for(int j = 0; j < (2*i + 1); j++){
+            cout << ch;
+            if(j < breakpoint) ch++;
+            else ch--;
+        }
+        for(int j = 0; j <=  6-i-1; j++){
+            cout << " ";
+        }
+        cout << endl;
+    }
+}
+
 int main(){                         
-    print16();
+    print17();
     return 0;
 }
 
-//A 
-//B B 
-//C C C 
-//D D D D 
-//E E E E E 
-//F F F F F F 
-//G G G G G G G 
+
+//      A      
+//     ABA     
+//    ABCBA    
+//   ABCDCBA   
+//  ABCDEDCBA  
+// ABCDEFEDCBA 
+
+
+
 
