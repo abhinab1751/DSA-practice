@@ -184,18 +184,27 @@ void print17(){
     }
 }
 
+void print18(){
+    for(int i = 0; i <= 4; i++){
+        for(char j = 'E' - i ; j <= 'E'; j++){
+            cout << j;
+        }
+        cout << endl;
+    }
+}
+
 int main(){                         
-    print17();
+    print18();
     return 0;
 }
 
+//E
+//DE
+//CDE
+//BCDE
+//ABCDE
 
-//      A      
-//     ABA     
-//    ABCBA    
-//   ABCDCBA   
-//  ABCDEDCBA  
-// ABCDEFEDCBA 
+
 
 
 
