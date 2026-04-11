@@ -38,7 +38,23 @@ void vectors(){
     cout << v.back() << " ";
     
 
-    
+    // For each Loop
+    for(vector<int>:: iterator it = v.begin(); it != v.end(); it++){       // extended 
+        cout << *(it) << " ";
+    }
+    for(auto it = v.begin(); it != v.end(); it++){ // use auto it directly get the variable used like int string and many more.
+        cout << *(it) << " ";
+    }
+    for(auto it : v){
+        cout << it << " ";  // for each loop
+    }
 
+    //erase
+    v.erase(v.begin() + 1); //{10,20,12,23}
+
+
+    //{10,20,12,23,35}
+    v.erase(v.begin() + 2 , v.begin() + 4) //{10,20,35} {start,end}
+    
 
 }
