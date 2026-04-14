@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "d:/DSA(BinarySearchTree)/patterns",
-      "program": "d:/DSA(BinarySearchTree)/patterns/build/Debug/outDebug",
+      "cwd": "d:/DSA(BinarySearchTree)/maths",
+      "program": "d:/DSA(BinarySearchTree)/maths/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
