@@ -3,3 +3,5 @@ Daily DSA Practice
 2) Graph
 3) Patterns
 4) oops
+docker start quantai-pg
+docker stop quantai-pg
