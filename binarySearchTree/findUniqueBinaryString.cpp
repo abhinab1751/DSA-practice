@@ -277,3 +277,74 @@ public:
         return ans;
     }
 };
+
+
+
+
+
+
+----------------------------------------------------------------------------------------------------------------->
+    #include <bits/stdc++.h>
+using namespace std;
+
+class DSU {
+public:
+    vector<int> parent;
+
+    DSU(int n) {
+        parent.resize(n);
+        for (int i = 0; i < n; i++)
+            parent[i] = i;
+    }
+
+    int find(int x) {
+        if (parent[x] != x)
+            parent[x] = find(parent[x]);
+        return parent[x];
+    }
+
+    void unite(int x, int y) {
+        int px = find(x), py = find(y);
+        if (px != py)
+            parent[py] = px;
+    }
+};
+
+class Solution {
+public:
+    int minimumHammingDistance(vector<int>& source, vector<int>& target, vector<vector<int>>& allowedSwaps) {
+        int n = source.size();
+        DSU dsu(n);
+
+        for (auto &p : allowedSwaps) {
+            dsu.unite(p[0], p[1]);
+        }
+
+        
+        unordered_map<int, vector<int>> groups;
+        for (int i = 0; i < n; i++) {
+            groups[dsu.find(i)].push_back(i);
+        }
+
+        int res = 0;
+
+       
+        for (auto &g : groups) {
+            unordered_map<int, int> freq;
+
+            for (int idx : g.second) {
+                freq[source[idx]]++;
+            }
+
+            for (int idx : g.second) {
+                if (freq[target[idx]] > 0) {
+                    freq[target[idx]]--;
+                } else {
+                    res++;
+                }
+            }
+        }
+
+        return res;
+    }
+};
