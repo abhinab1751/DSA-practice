@@ -443,3 +443,82 @@ public:
         return abs(left - right) + blank;
     }
 };
+----------------------------------------------------------------------->
+    #include <vector>
+#include <algorithm>
+
+using namespace std;
+
+class Solution {
+public:
+    long long mapTo1D(long long x, long long y, long long side) {
+        if (y == 0) return x;
+        if (x == side) return side + y;
+        if (y == side) return 2LL * side + (side - x);
+        if (x == 0) return 3LL * side + (side - y);
+        return 0; 
+    }
+
+    int maxDistance(int side, vector<vector<int>>& points, int k) {
+        int n = points.size();
+        vector<long long> A;
+        A.reserve(n);
+        
+        for (const auto& p : points) {
+            A.push_back(mapTo1D(p[0], p[1], side));
+        }
+        sort(A.begin(), A.end());
+
+        vector<long long> P(2 * n);
+        for (int i = 0; i < n; ++i) {
+            P[i] = A[i];
+            P[i + n] = A[i] + 4LL * side;
+        }
+
+        long long low = 1, high = side;
+        long long ans = 1;
+
+        while (low <= high) {
+            long long mid = low + (high - low) / 2;
+
+            vector<int> nxt(2 * n, 2 * n);
+            int j = 0;
+            for (int i = 0; i < 2 * n; ++i) {
+                while (j < 2 * n && P[j] - P[i] < mid) {
+                    j++;
+                }
+                nxt[i] = j;
+            }
+
+            bool possible = false;
+            
+            for (int i = 0; i < n; ++i) {
+                int curr = i;
+                int count = 1;
+                
+               
+                for (int step = 1; step < k; ++step) {
+                    curr = nxt[curr];
+                    if (curr >= 2 * n) break; // Exceeded boundaries
+                    count++;
+                }
+                
+                
+                if (count == k && P[curr] - P[i] <= 4LL * side - mid) {
+                    possible = true;
+                    break;
+                }
+            }
+
+            
+            if (possible) {
+                ans = mid;
+                low = mid + 1; 
+            } else {
+                high = mid - 1;
+            }
+        }
+
+        return static_cast<int>(ans);
+    }
+};
