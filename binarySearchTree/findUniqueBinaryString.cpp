@@ -277,3 +277,590 @@ public:
         return ans;
     }
 };
+
+
+
+
+
+
+----------------------------------------------------------------------------------------------------------------->
+    #include <bits/stdc++.h>
+using namespace std;
+
+class DSU {
+public:
+    vector<int> parent;
+
+    DSU(int n) {
+        parent.resize(n);
+        for (int i = 0; i < n; i++)
+            parent[i] = i;
+    }
+
+    int find(int x) {
+        if (parent[x] != x)
+            parent[x] = find(parent[x]);
+        return parent[x];
+    }
+
+    void unite(int x, int y) {
+        int px = find(x), py = find(y);
+        if (px != py)
+            parent[py] = px;
+    }
+};
+
+class Solution {
+public:
+    int minimumHammingDistance(vector<int>& source, vector<int>& target, vector<vector<int>>& allowedSwaps) {
+        int n = source.size();
+        DSU dsu(n);
+
+        for (auto &p : allowedSwaps) {
+            dsu.unite(p[0], p[1]);
+        }
+
+        
+        unordered_map<int, vector<int>> groups;
+        for (int i = 0; i < n; i++) {
+            groups[dsu.find(i)].push_back(i);
+        }
+
+        int res = 0;
+
+       
+        for (auto &g : groups) {
+            unordered_map<int, int> freq;
+
+            for (int idx : g.second) {
+                freq[source[idx]]++;
+            }
+
+            for (int idx : g.second) {
+                if (freq[target[idx]] > 0) {
+                    freq[target[idx]]--;
+                } else {
+                    res++;
+                }
+            }
+        }
+
+        return res;
+    }
+};
+
+
+---------------------------------------------------------------------------------------------->
+    class Solution {
+public:
+    vector<string> twoEditWords(vector<string>& queries, vector<string>& dictionary) {
+        vector<string> result;
+
+        for (string &q : queries) {
+            for (string &d : dictionary) {
+                int diff = 0;
+
+                for (int i = 0; i < q.size(); i++) {
+                    if (q[i] != d[i]) {
+                        diff++;
+                        if (diff > 2) break;
+                    }
+                }
+
+                if (diff <= 2) {
+                    result.push_back(q);
+                    break; 
+                }
+            }
+        }
+
+        return result;
+    }
+};
+
+
+
+
+
+---------------------------------------------------------------------------------------->
+    class Solution {
+public:
+    vector<long long> distance(vector<int>& nums) {
+        int n = nums.size();
+        unordered_map<int, vector<int>> mp;
+        
+        for (int i = 0; i < n; i++) {
+            mp[nums[i]].push_back(i);
+        }
+        
+        vector<long long> ans(n, 0);
+        
+        for (auto &it : mp) {
+            vector<int> &v = it.second;
+            int m = v.size();
+            
+            vector<long long> prefix(m, 0);
+            prefix[0] = v[0];
+            
+            for (int i = 1; i < m; i++) {
+                prefix[i] = prefix[i - 1] + v[i];
+            }
+            
+            for (int i = 0; i < m; i++) {
+                long long left = 0, right = 0;
+                
+                if (i > 0) {
+                    left = (long long)v[i] * i - prefix[i - 1];
+                }
+                
+                if (i < m - 1) {
+                    right = (prefix[m - 1] - prefix[i]) - (long long)v[i] * (m - i - 1);
+                }
+                
+                ans[v[i]] = left + right;
+            }
+        }
+        
+        return ans;
+    }
+};
+
+
+
+
+---------------------------------------------------------------------------------------------------------------->
+    class Solution {
+public:
+    int furthestDistanceFromOrigin(string moves) {
+        int left = 0, right = 0, blank = 0;
+        
+        for(char c : moves) {
+            if(c == 'L') left++;
+            else if(c == 'R') right++;
+            else blank++;
+        }
+        
+        return abs(left - right) + blank;
+    }
+};
+----------------------------------------------------------------------->
+    #include <vector>
+#include <algorithm>
+
+using namespace std;
+
+class Solution {
+public:
+    long long mapTo1D(long long x, long long y, long long side) {
+        if (y == 0) return x;
+        if (x == side) return side + y;
+        if (y == side) return 2LL * side + (side - x);
+        if (x == 0) return 3LL * side + (side - y);
+        return 0; 
+    }
+
+    int maxDistance(int side, vector<vector<int>>& points, int k) {
+        int n = points.size();
+        vector<long long> A;
+        A.reserve(n);
+        
+        for (const auto& p : points) {
+            A.push_back(mapTo1D(p[0], p[1], side));
+        }
+        sort(A.begin(), A.end());
+
+        vector<long long> P(2 * n);
+        for (int i = 0; i < n; ++i) {
+            P[i] = A[i];
+            P[i + n] = A[i] + 4LL * side;
+        }
+
+        long long low = 1, high = side;
+        long long ans = 1;
+
+        while (low <= high) {
+            long long mid = low + (high - low) / 2;
+
+            vector<int> nxt(2 * n, 2 * n);
+            int j = 0;
+            for (int i = 0; i < 2 * n; ++i) {
+                while (j < 2 * n && P[j] - P[i] < mid) {
+                    j++;
+                }
+                nxt[i] = j;
+            }
+
+            bool possible = false;
+            
+            for (int i = 0; i < n; ++i) {
+                int curr = i;
+                int count = 1;
+                
+               
+                for (int step = 1; step < k; ++step) {
+                    curr = nxt[curr];
+                    if (curr >= 2 * n) break; // Exceeded boundaries
+                    count++;
+                }
+                
+                
+                if (count == k && P[curr] - P[i] <= 4LL * side - mid) {
+                    possible = true;
+                    break;
+                }
+            }
+
+            
+            if (possible) {
+                ans = mid;
+                low = mid + 1; 
+            } else {
+                high = mid - 1;
+            }
+        }
+
+        return static_cast<int>(ans);
+    }
+};
+
+
+
+
+------------------------------------------------------------------------------------------>
+
+    class Solution {
+public:
+    int m, n;
+    vector<vector<bool>> vis;
+    int dx[4] = {1, -1, 0, 0};
+    int dy[4] = {0, 0, 1, -1};
+
+    bool dfs(vector<vector<char>>& grid, int x, int y, int px, int py, char ch) {
+        vis[x][y] = true;
+
+        for (int k = 0; k < 4; k++) {
+            int nx = x + dx[k];
+            int ny = y + dy[k];
+
+            if (nx < 0 || ny < 0 || nx >= m || ny >= n) continue;
+            if (grid[nx][ny] != ch) continue;
+
+            if (nx == px && ny == py) continue;
+
+            if (vis[nx][ny]) return true;
+
+            if (dfs(grid, nx, ny, x, y, ch)) return true;
+        }
+
+        return false;
+    }
+
+    bool containsCycle(vector<vector<char>>& grid) {
+        m = grid.size();
+        n = grid[0].size();
+        vis.assign(m, vector<bool>(n, false));
+
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (!vis[i][j]) {
+                    if (dfs(grid, i, j, -1, -1, grid[i][j]))
+                        return true;
+                }
+            }
+        }
+
+        return false;
+    }
+};
+
+
+------------------------------------------------------------------------------------------------->
+
+    class Solution {
+public:
+    vector<vector<int>> dir = {
+        {},                
+        {0, 1, 0, -1},      
+        {1, 0, -1, 0},      
+        {0, -1, 1, 0},      
+        {0, 1, 1, 0},       
+        {0, -1, -1, 0},     
+        {0, 1, -1, 0}       
+    };
+
+    bool hasValidPath(vector<vector<int>>& grid) {
+        int m = grid.size(), n = grid[0].size();
+
+        queue<pair<int,int>> q;
+        vector<vector<bool>> vis(m, vector<bool>(n, false));
+
+        q.push({0,0});
+        vis[0][0] = true;
+
+        while(!q.empty()) {
+            auto [x, y] = q.front();
+            q.pop();
+
+            if(x == m-1 && y == n-1) return true;
+
+            int type = grid[x][y];
+
+            for(int i = 0; i < dir[type].size(); i += 2) {
+                int nx = x + dir[type][i];
+                int ny = y + dir[type][i+1];
+
+                if(nx < 0 || ny < 0 || nx >= m || ny >= n || vis[nx][ny])
+                    continue;
+
+                int nextType = grid[nx][ny];
+
+                for(int j = 0; j < dir[nextType].size(); j += 2) {
+                    int backX = nx + dir[nextType][j];
+                    int backY = ny + dir[nextType][j+1];
+
+                    if(backX == x && backY == y) {
+                        vis[nx][ny] = true;
+                        q.push({nx, ny});
+                        break;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+};
+--------------------------------------------------------------------------------------------------------------------->
+    class Solution {
+public:
+    int minOperations(vector<vector<int>>& grid, int x) {
+        vector<int> nums;
+        
+        for (auto &row : grid) {
+            for (int val : row) {
+                nums.push_back(val);
+            }
+        }
+        
+        int rem = nums[0] % x;
+        for (int num : nums) {
+            if (num % x != rem) return -1;
+        }
+        
+        sort(nums.begin(), nums.end());
+        int median = nums[nums.size() / 2];
+        
+        int ops = 0;
+        for (int num : nums) {
+            ops += abs(num - median) / x;
+        }
+        
+        return ops;
+    }
+};
+
+------------------------------------------------------------------------------------------>
+
+    class Solution {
+public:
+    vector<vector<int>> transpose(vector<vector<int>>& matrix) {
+        int rows = matrix.size();
+        int cols = matrix[0].size();
+
+        vector<vector<int>> ans(cols, vector<int>(rows));
+
+        for(int i = 0; i < rows; i++) {
+            for(int j = 0; j < cols; j++) {
+                ans[j][i] = matrix[i][j];
+            }
+        }
+
+        return ans;
+    }
+};
+
+--------------------------------------------------------------------------------------------->
+    class Solution {
+public:
+    int maxPathScore(vector<vector<int>>& grid, int k) {
+        int m = grid.size();
+        int n = grid[0].size();
+
+        const int NEG = -1e9;
+
+        vector<vector<vector<int>>> dp(
+            m, vector<vector<int>>(n, vector<int>(k + 1, NEG))
+        );
+
+        dp[0][0][0] = 0;  
+
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+
+                if (i == 0 && j == 0) continue;
+
+                int addScore = grid[i][j];
+                int addCost = (grid[i][j] == 0 ? 0 : 1);
+
+                for (int c = addCost; c <= k; c++) {
+
+                    if (i > 0 && dp[i - 1][j][c - addCost] != NEG) {
+                        dp[i][j][c] = max(
+                            dp[i][j][c],
+                            dp[i - 1][j][c - addCost] + addScore
+                        );
+                    }
+
+                    if (j > 0 && dp[i][j - 1][c - addCost] != NEG) {
+                        dp[i][j][c] = max(
+                            dp[i][j][c],
+                            dp[i][j - 1][c - addCost] + addScore
+                        );
+                    }
+                }
+            }
+        }
+
+        int ans = -1;
+        for (int c = 0; c <= k; c++) {
+            ans = max(ans, dp[m - 1][n - 1][c]);
+        }
+
+        return ans < 0 ? -1 : ans;
+    }
+};
+
+
+--------------------------------------------------------------------------------------------->
+    class Solution {
+public:
+    int repeatedNTimes(vector<int>& nums) {
+        unordered_set<int> seen;
+        for (int x : nums) {
+            if (seen.count(x)) return x;
+            seen.insert(x);
+        }
+        return -1; 
+    }
+};
+------------------------------------------------------------------------------------------------->
+    class Solution {
+public:
+    bool isGood(int num) {
+        bool changed = false;
+
+        while(num > 0) {
+            int digit = num % 10;
+
+            if(digit == 3 || digit == 4 || digit == 7)
+                return false;
+
+            if(digit == 2 || digit == 5 || digit == 6 || digit == 9)
+                changed = true;
+
+            num /= 10;
+        }
+
+        return changed;
+    }
+
+    int rotatedDigits(int n) {
+        int count = 0;
+
+        for(int i = 1; i <= n; i++) {
+            if(isGood(i))
+                count++;
+        }
+
+        return count;
+    }
+};
+
+------------------------------------------------------------------------------------------------------------------------------>
+    class Solution {
+public:
+    bool rotateString(string s, string goal) {
+        if (s.length() != goal.length()) return false;
+        
+        string temp = s + s;
+        return temp.find(goal) != string::npos;
+    }
+};
+
+------------------------------------------------------------------------------------------------------------------->
+    class Solution {
+public:
+    void rotate(vector<vector<int>>& matrix) {
+        int n = matrix.size();
+
+        for(int i = 0; i < n; i++) {
+            for(int j = i + 1; j < n; j++) {
+                swap(matrix[i][j], matrix[j][i]);
+            }
+        }
+
+        for(int i = 0; i < n; i++) {
+            reverse(matrix[i].begin(), matrix[i].end());
+        }
+    }
+};
+----------------------------------------------------------------------------------------------------------------------->
+    class Solution {
+public:
+    ListNode* rotateRight(ListNode* head, int k) {
+        if (!head || !head->next || k == 0) return head;
+
+        ListNode* temp = head;
+        int n = 1;
+        while (temp->next) {
+            temp = temp->next;
+            n++;
+        }
+
+        temp->next = head;
+
+        k = k % n;
+
+        int steps = n - k;
+        ListNode* newTail = head;
+        for (int i = 1; i < steps; i++) {
+            newTail = newTail->next;
+        }
+
+        ListNode* newHead = newTail->next;
+        newTail->next = NULL;
+
+        return newHead;
+    }
+};
+---------------------------------------------------------------------------------------------------------------------->
+    class Solution {
+public:
+    vector<vector<char>> rotateTheBox(vector<vector<char>>& boxGrid) {
+        int m = boxGrid.size();
+        int n = boxGrid[0].size();
+
+        for (int i = 0; i < m; i++) {
+            int empty = n - 1;
+            for (int j = n - 1; j >= 0; j--) {
+                if (boxGrid[i][j] == '*') {
+                    empty = j - 1;
+                } 
+                else if (boxGrid[i][j] == '#') {
+                    swap(boxGrid[i][j], boxGrid[i][empty]);
+                    empty--;
+                }
+            }
+        }
+
+        vector<vector<char>> result(n, vector<char>(m));
+
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                result[j][m - 1 - i] = boxGrid[i][j];
+            }
+        }
+
+        return result;
+    }
+};
