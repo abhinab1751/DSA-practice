@@ -94,3 +94,59 @@ int main() {
 
     return 0;
 }
+-------------------------------------------------------------------------------------------------------------------->
+    #include <vector>
+#include <algorithm>
+
+using namespace std;
+
+class Solution {
+public:
+    vector<vector<int>> rotateGrid(vector<vector<int>>& grid, int k) {
+        int m = grid.size();
+        int n = grid[0].size();
+        int layers = min(m, n) / 2;
+        
+        for (int l = 0; l < layers; ++l) {
+            int top = l;
+            int bottom = m - 1 - l;
+            int left = l;
+            int right = n - 1 - l;
+            
+            vector<int> vals;
+            
+            for (int j = left; j <= right; ++j) {
+                vals.push_back(grid[top][j]);
+            }
+            for (int i = top + 1; i <= bottom; ++i) {
+                vals.push_back(grid[i][right]);
+            }
+            for (int j = right - 1; j >= left; --j) {
+                vals.push_back(grid[bottom][j]);
+            }
+            for (int i = bottom - 1; i > top; --i) {
+                vals.push_back(grid[i][left]);
+            }
+
+            int rot = k % vals.size();
+
+            rotate(vals.begin(), vals.begin() + rot, vals.end());
+            
+            int idx = 0;
+            for (int j = left; j <= right; ++j) {
+                grid[top][j] = vals[idx++];
+            }
+            for (int i = top + 1; i <= bottom; ++i) {
+                grid[i][right] = vals[idx++];
+            }
+            for (int j = right - 1; j >= left; --j) {
+                grid[bottom][j] = vals[idx++];
+            }
+            for (int i = bottom - 1; i > top; --i) {
+                grid[i][left] = vals[idx++];
+            }
+        }
+        
+        return grid;
+    }
+};
